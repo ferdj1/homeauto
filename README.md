@@ -12,7 +12,7 @@ Start up server:
 
 Server will be started at `localhost:3000`.
 
-###Running clients
+### Running clients
 
 Clients are defined as JavaScript files in *clients* folder.
 Run them by using command:
