@@ -1,0 +1,72 @@
+<form action="/exec" id="changeVolume" method="post">
+    <input type="hidden" name="deviceID" value="sony-smartTV43HD">
+    <input type="hidden" name="commandID" value="changeVolume">
+    <div class="field">
+        <label class="label">Volume</label>
+        <div class="control">
+            <input type="number" class="input" name="params">
+        </div>
+        <div class="control">
+            <button class="button is-link">Change Volume</button>
+        </div>
+    </div>
+</form>
+<form action="/exec" id="changeChannel" method="post">
+    <input type="hidden" name="deviceID" value="sony-smartTV43HD">
+    <input type="hidden" name="commandID" value="changeChannel">
+    <div class="field">
+        <label class="label">Channel</label>
+        <div class="control">
+            <input type="number" class="input" name="params">
+        </div>
+        <div class="control">
+            <button class="button is-link">Change Channel</button>
+        </div>
+    </div>
+</form>
+
+<form action="/exec" id="changeSource" method="post">
+    <input type="hidden" name="deviceID" value="sony-smartTV43HD">
+    <input type="hidden" name="commandID" value="changeSource">
+    <div class="field">
+        <label class="label">Source</label>
+        <div class="control">
+            <div class="select">
+                <select name="params" id="source">
+                    <option>TV</option>
+                    <option>EXT1</option>
+                    <option>EXT2</option>
+                    <option>EXT3</option>
+                    <option>HDMI1</option>
+                    <option>HDMI2</option>
+                    <option>HDMI3</option>
+                </select>
+            </div>
+        </div>
+        <div class="control">
+            <button class="button is-link">Change Source</button>
+        </div>
+    </div>
+</form>
+
+<br>
+<form action="/exec" id="turnOff" method="post">
+    <input type="hidden" name="deviceID" value="sony-smartTV43HD">
+    <input type="hidden" name="commandID" value="turnOff">
+    <div class="field">
+        <div class="control">
+            <button class="button is-link">Turn off</button>
+        </div>
+    </div>
+</form>
+
+<br>
+<form action="/exec" id="turnOn" method="post">
+    <input type="hidden" name="deviceID" value="sony-smartTV43HD">
+    <input type="hidden" name="commandID" value="turnOn">
+    <div class="field">
+        <div class="control">
+            <button class="button is-link">Turn on</button>
+        </div>
+    </div>
+</form>

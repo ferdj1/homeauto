@@ -1,0 +1,19 @@
+- var deviceList = devices;
+div.container#devices
+    if deviceList.length === 0
+        article.message
+            .message-header
+                p Connect devices
+            .message-body
+                p Connect devices to the system. Once connected, device will be registered in the database.
+    else
+        for device in deviceList
+            a(href='device/' + device.deviceID)
+                .notification.is-info
+                    h2.title.is-2 #{device.deviceName}
+                    h3.subtitle.is-3 #{device.deviceManufacturer}
+                    if socketMap.get(device.deviceID)
+                        span.tag.is-success Connected
+                    else
+                        span.tag.is-danger Disconnected
+

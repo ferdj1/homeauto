@@ -1,0 +1,50 @@
+{
+  "deviceID" : "philips-smartLightsRGB2",
+  "deviceName" : "Smart Lights RGB 2",
+  "deviceManufacturer" : "Philips",
+  "deviceType": "Lights",
+  "commands" : [
+    {
+      "commandID" : "turnOn",
+      "commandName" : "Turn On",
+      "commandDesc" : "Turns lights on",
+      "params": null,
+      "returnVal": null
+    },
+    {
+      "commandID" : "turnOff",
+      "commandName" : "Turn Off",
+      "commandDesc" : "Turns lights off",
+      "params": null,
+      "returnVal": null
+    },
+    {
+      "commandID" : "changeColor",
+      "commandName" : "Change Color",
+      "commandDesc" : "Change color of the lights",
+      "params": "string",
+      "returnVal": null
+    },
+    {
+      "commandID" : "changeIntensity",
+      "commandName" : "Change Intensity",
+      "commandDesc" : "Change intensity of the lights",
+      "params": "int",
+      "returnVal": null
+    },
+    {
+      "commandID" : "getColor",
+      "commandName" : "Get Color",
+      "commandDesc" : "Gets currently set color",
+      "params": null,
+      "returnVal": "string"
+    },
+    {
+      "commandID" : "getIntensity",
+      "commandName" : "Get Intensity",
+      "commandDesc" : "Gets currently set intensity",
+      "params": null,
+      "returnVal": "int"
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "deviceID" : "sony-smartTV43HD",
+  "deviceName" : "Smart TV 43 HD",
+  "deviceManufacturer" : "Sony",
+  "deviceType": "TV",
+  "commands" : [
+    {
+      "commandID" : "turnOn",
+      "commandName" : "Turn On",
+      "commandDesc" : "Turns TV on",
+      "params": null,
+      "returnVal": null
+    },
+    {
+      "commandID" : "turnOff",
+      "commandName" : "Turn Off",
+      "commandDesc" : "Turns TV off",
+      "params": null,
+      "returnVal": null
+    },
+    {
+      "commandID" : "changeVolume",
+      "commandName" : "Change Volume",
+      "commandDesc" : "Changes TVs volume",
+      "params": "int",
+      "returnVal": null
+    },
+    {
+      "commandID" : "changeSource",
+      "commandName" : "Change Source",
+      "commandDesc" : "Changes TVs source",
+      "params": "string",
+      "returnVal": null
+    },
+    {
+      "commandID" : "changeChannel",
+      "commandName" : "Change Channel",
+      "commandDesc" : "Changes current channel",
+      "params": "int",
+      "returnVal": null
+    },
+    {
+      "commandID" : "getVolume",
+      "commandName" : "Get Volume",
+      "commandDesc" : "Gets currently set volume",
+      "params": null,
+      "returnVal": "int"
+    },
+    {
+      "commandID" : "getChannel",
+      "commandName" : "Get Channel",
+      "commandDesc" : "Gets currently set channel",
+      "params": null,
+      "returnVal": "int"
+    }
+  ]
+}

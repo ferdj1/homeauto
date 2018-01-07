@@ -1,0 +1,263 @@
+extends layout
+block header
+    include includes/header
+block content
+    .container
+        form(action="/subscriptions", method="post")
+            .field
+                .columns
+                    .column
+                        label.label Observed device
+                        .control
+                            .select
+                                select#observed(name="observed")
+                                    - var deviceList = devices;
+                                    for device in deviceList
+                                        option #{device.deviceID}
+                        div#observedSection
+                    .column
+                        label.label Observed call
+                        .control
+                            .select
+                                select#observedCall(name="observedCall")
+                        div#observedCallSection
+                    .column
+                        label.label Observer
+                        .control
+                            .select
+                                select#observer(name="observer")
+                                    - var deviceList = devices;
+                                    for device in deviceList
+                                        option #{device.deviceID}
+                        div#observerSection
+
+                    .column
+                        label.label Call that is executed
+                        .control
+                            .select
+                                select#executedCall(name="executedCall")
+                        div#execSection
+
+
+
+                .control
+                    button.button.is-link Subscribe
+    .container
+        .section
+            h1.title Subscriptions:
+            - var subscriptionList = subscriptions;
+                for sub in subscriptionList
+                    .box
+                        h1.title.is-4 #{sub.observedDeviceID} : #{sub.observedCommandID}
+                        for obs in sub.observerList
+                            p.is-5 #{obs.observerDeviceID} : #{obs.executedCommandID}
+    script.
+
+        var obs = document.getElementById('observer');
+        obs.onchange = function () {
+            var currentDevice = document.getElementById('observer');
+            var commList;
+            var value = currentDevice.options[currentDevice.selectedIndex].value;
+            var html = '';
+            var index = -1;
+            var deviceList = !{JSON.stringify(devices)};
+            for (i = 0; i < deviceList.length; i++) {
+                if (deviceList[i].deviceID === value) {
+                    commList = deviceList[i].commands;
+                    index = i;
+                }
+            }
+
+            for (i = 0; i < commList.length; i++) {
+                html += '<option>' + commList[i].commandID + '</option>';
+            }
+
+            document.getElementById('executedCall').innerHTML = html;
+
+            var obsCall = document.getElementById('observedCall');
+            if(obsCall.selectedIndex >= 0) {
+                compCheck();
+            }
+
+            var htmlDevice = '';
+            var deviceName = deviceList[index].deviceName;
+            var deviceManufacturer = deviceList[index].deviceManufacturer;
+
+            htmlDevice += '<div class="box"><h3 class="is-5">' + value + '</h3>';
+            htmlDevice += '<h2 class="title">' + deviceName + '</h2>';
+            htmlDevice += '<h3 class="subtitle">' + deviceManufacturer + '</h3>';
+            htmlDevice += '</div>';
+
+            document.getElementById('observerSection').innerHTML = htmlDevice;
+
+        };
+
+        obs.onchange();
+
+        var obs2 = document.getElementById('observed');
+        obs2.onchange = function () {
+            var currentDevice = document.getElementById('observed');
+            var commList;
+            var value = currentDevice.options[currentDevice.selectedIndex].value;
+            var html = '';
+            var index = -1;
+            var deviceList = !{JSON.stringify(devices)};
+            for (i = 0; i < deviceList.length; i++) {
+                if (deviceList[i].deviceID === value) {
+                    commList = deviceList[i].commands;
+                    index = i;
+                }
+            }
+
+            for (i = 0; i < commList.length; i++) {
+                html += '<option>' + commList[i].commandID + '</option>';
+            }
+
+            document.getElementById('observedCall').innerHTML = html;
+
+            var htmlDevice = '';
+            var deviceName = deviceList[index].deviceName;
+            var deviceManufacturer = deviceList[index].deviceManufacturer;
+
+            htmlDevice += '<div class="box"><h3 class="is-5">' + value + '</h3>';
+            htmlDevice += '<h2 class="title">' + deviceName + '</h2>';
+            htmlDevice += '<h3 class="subtitle">' + deviceManufacturer + '</h3>';
+            htmlDevice += '</div>';
+
+            document.getElementById('observedSection').innerHTML = htmlDevice;
+        };
+
+        obs2.onchange();
+
+        var exec = document.getElementById('executedCall');
+
+        exec.onchange = function () {
+            var currentDevice = document.getElementById('observer');
+            var devStr = currentDevice.options[currentDevice.selectedIndex].value;
+            var value = exec.options[exec.selectedIndex].value;
+            var deviceList = !{JSON.stringify(devices)};
+            var dev;
+            var command;
+
+            for (i = 0; i < deviceList.length; i++) {
+                if (deviceList[i].deviceID === devStr) {
+                    dev = deviceList[i];
+                }
+            }
+
+            for(i = 0; i < dev.commands.length; i++) {
+                if(dev.commands[i].commandID === value) {
+                    command = dev.commands[i];
+                }
+            }
+
+            var htmlComm = '';
+            var commName = command.commandName;
+            var commDesc = command.commandDesc;
+            var params = command.params;
+            var retVal = command.returnVal;
+
+            htmlComm += '<div class="box"><h3 class="is-5">' + value + '</h3>';
+            htmlComm += '<h2 class="title">' + commName + '</h2>';
+            htmlComm += '<h3 class="subtitle">' + commDesc + '</h3>';
+            htmlComm += '<h3 class="is-6">Parameters: ' + params + '</h3>';
+            htmlComm += '<h3 class="is-6">Returns: ' + retVal + '</h3>';
+            htmlComm += '</div>';
+
+            document.getElementById('execSection').innerHTML = htmlComm;
+
+        };
+
+        exec.onchange();
+
+        var obsCall = document.getElementById('observedCall');
+
+        obsCall.onchange = function () {
+            var currentDevice = document.getElementById('observed');
+            var devStr = currentDevice.options[currentDevice.selectedIndex].value;
+            var value = obsCall.options[obsCall.selectedIndex].value;
+            var deviceList = !{JSON.stringify(devices)};
+            var dev;
+            var command;
+
+            for (i = 0; i < deviceList.length; i++) {
+                if (deviceList[i].deviceID === devStr) {
+                    dev = deviceList[i];
+                }
+            }
+
+            for (i = 0; i < dev.commands.length; i++) {
+                if (dev.commands[i].commandID === value) {
+                    command = dev.commands[i];
+                }
+            }
+
+            compCheck();
+
+            var htmlComm = '';
+            var commName = command.commandName;
+            var commDesc = command.commandDesc;
+            var params = command.params;
+            var retVal = command.returnVal;
+
+            htmlComm += '<div class="box"><h3 class="is-5">' + value + '</h3>';
+            htmlComm += '<h2 class="title">' + commName + '</h2>';
+            htmlComm += '<h3 class="subtitle">' + commDesc + '</h3>';
+            htmlComm += '<h3 class="is-6">Parameters: ' + params + '</h3>';
+            htmlComm += '<h3 class="is-6">Returns: ' + retVal + '</h3>';
+            htmlComm += '</div>';
+
+            document.getElementById('observedCallSection').innerHTML = htmlComm;
+        };
+
+        obsCall.onchange();
+
+        function compCheck() {
+            //Comp.
+            var deviceList = !{JSON.stringify(devices)};
+            var currentDevice = document.getElementById('observed');
+            var currentObservingDevice = document.getElementById('observer');
+            var obsDevStr = currentObservingDevice.options[currentObservingDevice.selectedIndex].value;
+            var obsDev;
+            var commandList = [];
+            var currentCommand;
+            var devStr = currentDevice.options[currentDevice.selectedIndex].value;
+            var dev;
+            var obsCall = document.getElementById('observedCall');
+            var value = obsCall.options[obsCall.selectedIndex].value;
+
+
+            for (i = 0; i < deviceList.length; i++) {
+                if (deviceList[i].deviceID === devStr) {
+                    dev = deviceList[i];
+                }
+            }
+
+            for (i = 0; i < dev.commands.length; i++) {
+                if (dev.commands[i].commandID === value) {
+                    currentCommand = dev.commands[i];
+                }
+            }
+
+            for (i = 0; i < deviceList.length; i++) {
+                if (deviceList[i].deviceID === obsDevStr) {
+                    obsDev = deviceList[i];
+                }
+            }
+
+            for (i = 0; i < obsDev.commands.length; i++) {
+                if (obsDev.commands[i].params === currentCommand.returnVal ||
+                    obsDev.commands[i].params == null) {
+                    commandList.push(obsDev.commands[i].commandID);
+                }
+            }
+
+            var execHTML = '';
+
+            for (i = 0; i < commandList.length; i++) {
+                execHTML += '<option>' + commandList[i] + '</option>';
+            }
+
+            document.getElementById('executedCall').innerHTML = execHTML;
+            //
+        }

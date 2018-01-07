@@ -1,0 +1,10 @@
+extends layout
+block header
+    include includes/header
+block content
+    .container
+        article.message.is-danger
+            .message-header
+                p Error
+            .message-body
+                p= error_message

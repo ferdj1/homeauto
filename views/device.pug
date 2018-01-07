@@ -1,0 +1,27 @@
+extends layout
+block header
+    include includes/header
+block content
+    section.hero.is-primary
+        .hero-body
+            .container
+                h1.title= device.deviceName
+                h3.subtitle= device.deviceManufacturer
+                if socketMap.get(device.deviceID)
+                    span.tag.is-success Connected
+                else
+                    span.tag.is-danger Disconnected
+    .container
+        section.section
+            .container
+                if info != undefined || info != null
+                    each value, key in info
+                        if key !== 'deviceID'
+                            h2.subtitle= key + ": " + value
+        #impl
+
+    script.
+        var html = '!{device.htmlImpl}';
+        var $impl = document.getElementById('impl');
+        $impl.innerHTML = html;
+

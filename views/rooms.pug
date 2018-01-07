@@ -1,0 +1,60 @@
+extends layout
+
+block header
+    include includes/header
+block content
+    .container
+        form(action="/rooms" method="post")
+            .field
+                label.label Room name
+                .control
+                    input.input(type="text" placeholder="Room name" name="roomName")
+                label.label Room type
+                .control
+                    .select
+                        select(name="roomType")
+                            option Living room
+                            option Bedroom
+                            option Kitchen
+                            option Bathroom
+                            option Hallway
+                            option Toilet
+                            option Garage
+                            option Dining room
+                            option Balcony
+                            option Garden
+                            option Storage room
+                .control
+                    button.button.is-link Create new room
+    .section
+        .container
+            h1.title Rooms:
+            - var roomList = rooms;
+            - var deviceList = devices;
+            for room in roomList
+                .section.box
+                    span.tag.is-warning #{room.roomType}
+                    h2.title.is-3 #{room.roomName}
+                    for device in room.devices
+                        a(href='device/' + device.deviceID)
+                            .notification.is-link
+                                h2.title.is-4 #{device.deviceName}
+                                h3.subtitle.is-5 #{device.deviceManufacturer}
+                                if socketMap.get(device.deviceID)
+                                    span.tag.is-success Connected
+                                else
+                                    span.tag.is-danger Disconnected
+                    form(action="/addDevToRoom" method="post")
+                        .field
+                            .control
+                                input.input(type="hidden" name="roomName" value=room.roomName)
+                            label.label Add device to room:
+                            .control
+                                .select
+                                    select(name="roomDevID")
+                                        for dev in deviceList
+                                            option #{dev.deviceID}
+                            .control
+                                button.button.is-link Add
+
+
