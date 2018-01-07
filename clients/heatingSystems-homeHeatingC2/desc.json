@@ -1,0 +1,85 @@
+{
+  "deviceID" : "heatingSystems-homeHeatingC2",
+  "deviceName" : "Home Heating C2",
+  "deviceManufacturer" : "Heating Systems",
+  "deviceType": "Heating",
+  "commands" : [
+    {
+      "commandID" : "turnOn",
+      "commandName" : "Turn On",
+      "commandDesc" : "Turns heating on",
+      "params": null,
+      "returnVal": null
+    },
+    {
+      "commandID" : "turnOff",
+      "commandName" : "Turn Off",
+      "commandDesc" : "Turns heating off",
+      "params": null,
+      "returnVal": null
+    },
+    {
+      "commandID" : "turnOn1",
+      "commandName" : "Turn On Heater 1",
+      "commandDesc" : "Turns heater 1 on",
+      "params": null,
+      "returnVal": null
+    },
+    {
+      "commandID" : "turnOff1",
+      "commandName" : "Turn Off Heater 1",
+      "commandDesc" : "Turns heater 1 off",
+      "params": null,
+      "returnVal": null
+    },
+    {
+      "commandID" : "turnOn2",
+      "commandName" : "Turn On Heater 2",
+      "commandDesc" : "Turns heater 2 on",
+      "params": null,
+      "returnVal": null
+    },
+    {
+      "commandID" : "turnOff2",
+      "commandName" : "Turn Off Heater 2",
+      "commandDesc" : "Turns heater 2 off",
+      "params": null,
+      "returnVal": null
+    },
+    {
+      "commandID" : "turnOn3",
+      "commandName" : "Turn On Heater 3",
+      "commandDesc" : "Turns heater 3 on",
+      "params": null,
+      "returnVal": null
+    },
+    {
+      "commandID" : "turnOff3",
+      "commandName" : "Turn Off Heater 3",
+      "commandDesc" : "Turns heater 3 off",
+      "params": null,
+      "returnVal": null
+    },
+    {
+      "commandID" : "changeValue1",
+      "commandName" : "Change Value Heater 1",
+      "commandDesc" : "Changes value of heater 1",
+      "params": "int",
+      "returnVal": null
+    },
+    {
+      "commandID" : "changeValue2",
+      "commandName" : "Change Value Heater 2",
+      "commandDesc" : "Changes value of heater 2",
+      "params": "int",
+      "returnVal": null
+    },
+    {
+      "commandID" : "changeValue3",
+      "commandName" : "Change Value Heater 3",
+      "commandDesc" : "Changes value of heater 3",
+      "params": "int",
+      "returnVal": null
+    }
+  ]
+}
