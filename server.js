@@ -65,10 +65,23 @@ app.post('/subscriptions', function (req, res) {
     var reqBody = req.body;
     var db = req.db;
 
+    console.log(reqBody);
+
     var observer = reqBody.observer;
     var executedCall = reqBody.executedCall;
     var observed = reqBody.observed;
     var observedCall = reqBody.observedCall;
+    var optCheckInt = reqBody.optCheckInt;
+    var optCheckString = reqBody.optCheckString;
+    var optCheckBool = reqBody.optCheckBool;
+
+    var optTypeInt = reqBody.optTypeInt;
+    var optTypeString = reqBody.optTypeString;
+    var optTypeBool = reqBody.optTypeBool;
+    var signInt = reqBody.signInt;
+    var signBool = reqBody.signBool;
+    var compValInt = reqBody.compValueInt;
+    var compValString = reqBody.compValueString;
 
     var observerMapCollection = db.get('observerMapCollection');
     observerMapCollection.findOne({
@@ -83,7 +96,17 @@ app.post('/subscriptions', function (req, res) {
                 $addToSet: {
                     observerList: {
                         observerDeviceID: observer,
-                        executedCommandID: executedCall
+                        executedCommandID: executedCall,
+                        optCheckInt: optCheckInt,
+                        optTypeInt: optTypeInt,
+                        signInt: signInt,
+                        compValueInt: compValInt,
+                        optCheckString : optCheckString,
+                        optCheckBool: optCheckBool,
+                        optTypeString : optTypeString,
+                        optTypeBool : optTypeBool,
+                        signBool: signBool,
+                        compValueString : compValString
                     }
                 }
             }, function (err, doc) {
@@ -104,7 +127,17 @@ app.post('/subscriptions', function (req, res) {
                 observerList: [
                     {
                         observerDeviceID : observer,
-                        executedCommandID : executedCall
+                        executedCommandID : executedCall,
+                        optCheckInt: optCheckInt,
+                        optTypeInt: optTypeInt,
+                        signInt: signInt,
+                        compValueInt: compValInt,
+                        optCheckString : optCheckString,
+                        optCheckBool: optCheckBool,
+                        optTypeString : optTypeString,
+                        optTypeBool : optTypeBool,
+                        signBool: signBool,
+                        compValueString : compValString
                     }
                 ]
             }, function (err, doc) {
@@ -259,6 +292,17 @@ io.sockets.on('connection', function (socket) {
         var commandID = jsonObj.commandID;
         var res = jsonObj.result;
 
+        function alertObserver(observer, result) {
+            var socket = sessionSocketMap.get(observer.observerDeviceID);
+            if (socket) {
+                var execJson = {
+                    commandID: observer.executedCommandID,
+                    result: result
+                };
+                socket.emit('executed call', execJson);
+            }
+        }
+
         var observerMapCollection = db.get('observerMapCollection');
         observerMapCollection.findOne({
             observedDeviceID: deviceID,
@@ -267,13 +311,77 @@ io.sockets.on('connection', function (socket) {
             if(result) {
                 var observerList = result.observerList;
                 for(i = 0; i < observerList.length; i++) {
-                    var socket = sessionSocketMap.get(observerList[i].observerDeviceID);
-                    if(socket) {
-                        var execJson = {
-                            commandID: observerList[i].executedCommandID,
-                            result: res
-                        };
-                        socket.emit('executed call', execJson);
+                    var optCheckInt = observerList[i].optCheckInt;
+                    var optCheckString = observerList[i].optCheckString;
+                    var optCheckBool = observerList[i].optCheckBool;
+                    if(optCheckInt !== 'on' && optCheckString !== 'on' && optCheckBool !== 'on') {
+                        alertObserver(observerList[i], res);
+                    } else {
+                        var optTypeInt = observerList[i].optTypeInt;
+                        var optTypeString = observerList[i].optTypeString;
+                        var optTypeBool = observerList[i].optTypeBool;
+                        var optType;
+                        if(optTypeInt) {
+                            optType = 'intOpt';
+                        } else if(optTypeString) {
+                            optType = 'stringOpt';
+                        } else if(optTypeBool) {
+                            optType = 'boolOpt';
+                        }
+                        if(optType === 'intOpt') {
+                            var sign = observerList[i].signInt;
+                            switch (sign) {
+                                case 'less than':
+                                    var compVal = observerList[i].compValueInt;
+                                    if(res < compVal) {
+                                        alertObserver(observerList[i], res);
+                                    }
+                                    break;
+                                case 'less or equal to':
+                                    var compVal = observerList[i].compValueInt;
+                                    if(res <= compVal) {
+                                        alertObserver(observerList[i], res);
+                                    }
+                                    break;
+                                case 'equal':
+                                    var compVal = observerList[i].compValueInt;
+                                    if(res === compVal) {
+                                        alertObserver(observerList[i], res);
+                                    }
+                                    break;
+                                case 'greater or equal to':
+                                    var compVal = observerList[i].compValueInt;
+                                    if(res >= compVal) {
+                                        alertObserver(observerList[i], res);
+                                    }
+                                    break;
+                                case 'greater than':
+                                    var compVal = observerList[i].compValueInt;
+                                    if(res > compVal) {
+                                        alertObserver(observerList[i], res);
+                                    }
+                                    break;
+                            }
+
+                        } else if(optType === 'stringOpt') {
+                            if(res === observerList[i].compValueString) {
+                                alertObserver(observerList[i], res);
+                            }
+                        } else if(optType === 'boolOpt') {
+                            var sign = observerList[i].signBool;
+                            switch (sign) {
+                                case false:
+                                    if(res === false) {
+                                        alertObserver(observerList[i], res);
+                                    }
+                                    break;
+                                case true:
+                                    if(res === true) {
+                                        alertObserver(observerList[i], res);
+                                    }
+                                    break;
+                            }
+                        }
                     }
                 }
 

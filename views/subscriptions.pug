@@ -38,8 +38,48 @@ block content
                                 select#executedCall(name="executedCall")
                         div#execSection
 
-
-
+                .container#intOptionsSection
+                    input(type="hidden" name="optTypeInt" id="optTypeInt" value="true")
+                    .box
+                        h2.subtitle.is-3 Options:
+                        label.checkbox
+                            input#optCheckInt(type="checkbox" name="optCheckInt")
+                            |  Use options
+                        h4.is-4 Execute only if result is:
+                        .control
+                            .select
+                                select#intSign(name="signInt")
+                                    option less than
+                                    option less or equal to
+                                    option equal to
+                                    option greater or equal to
+                                    option greater than
+                        .control
+                            input.input#intCompVal(type="number" name="compValueInt")
+                .container#stringOptionsSection
+                    input(type="hidden" name="optTypeString" id="optTypeString" value="true")
+                    .box
+                        h2.subtitle.is-3 Options:
+                        label.checkbox
+                            input#optCheckString(type="checkbox" name="optCheckString")
+                            |  Use options
+                        h4.is-4 Execute only if result is equal to:
+                        .control
+                            input.input#strCompVal(type="text" name="compValueString")
+                .container#boolOptionsSection
+                    input(type="hidden" name="optTypeBool" id="optTypeBool" value="true")
+                    .box
+                        h2.subtitle.is-3 Options:
+                        label.checkbox
+                            input#optCheckBool(type="checkbox" name="optCheckBool")
+                            |  Use options
+                        h4.is-4 Execute only if result is:
+                        .control
+                            .select
+                                select#boolVal(name="signBool")
+                                    option false
+                                    option true
+                br
                 .control
                     button.button.is-link Subscribe
     .container
@@ -52,6 +92,15 @@ block content
                         for obs in sub.observerList
                             p.is-5 #{obs.observerDeviceID} : #{obs.executedCommandID}
     script.
+
+        var intOptions = document.getElementById('intOptionsSection');
+        intOptions.style.display = "none";
+
+        var stringOptions = document.getElementById('stringOptionsSection');
+        stringOptions.style.display = "none";
+
+        var boolOptions = document.getElementById('boolOptionsSection');
+        boolOptions.style.display = "none";
 
         var obs = document.getElementById('observer');
         obs.onchange = function () {
@@ -206,6 +255,66 @@ block content
             htmlComm += '<h3 class="is-6">Parameters: ' + params + '</h3>';
             htmlComm += '<h3 class="is-6">Returns: ' + retVal + '</h3>';
             htmlComm += '</div>';
+
+            if(retVal === 'int') {
+                intOptions.removeAttribute("disabled");
+                document.getElementById('optTypeInt').removeAttribute("disabled");
+
+                intOptions.style.display = "block";
+                stringOptions.style.display = "none";
+                boolOptions.style.display = "none";
+
+                stringOptions.setAttribute("disabled", "disabled");
+                boolOptions.setAttribute("disabled", "disabled");
+
+                document.getElementById('optTypeBool').setAttribute("disabled", "disabled");
+                document.getElementById('optTypeString').setAttribute("disabled", "disabled");
+
+
+            } else if(retVal === 'string') {
+                stringOptions.removeAttribute("disabled");
+                document.getElementById('optTypeString').removeAttribute("disabled");
+
+
+                intOptions.style.display = "none";
+                stringOptions.style.display = "block";
+                boolOptions.style.display = "none";
+
+                intOptions.setAttribute("disabled", "disabled");
+                boolOptions.setAttribute("disabled", "disabled");
+
+                document.getElementById('optTypeBool').setAttribute("disabled", "disabled");
+                document.getElementById('optTypeInt').setAttribute("disabled", "disabled");
+
+
+            } else if(retVal === 'bool') {
+                boolOptions.removeAttribute("disabled");
+                document.getElementById('optTypeBool').removeAttribute("disabled");
+
+                intOptions.style.display = "none";
+                stringOptions.style.display = "none";
+                boolOptions.style.display = "block";
+
+                intOptions.setAttribute("disabled", "disabled");
+                stringOptions.setAttribute("disabled", "disabled");
+
+                document.getElementById('optTypeString').setAttribute("disabled", "disabled");
+                document.getElementById('optTypeInt').setAttribute("disabled", "disabled");
+
+            } else {
+                intOptions.style.display = "none";
+                stringOptions.style.display = "none";
+                boolOptions.style.display = "none";
+
+                intOptions.setAttribute("disabled", "disabled");
+                boolOptions.setAttribute("disabled", "disabled");
+                stringOptions.setAttribute("disabled", "disabled");
+
+                document.getElementById('optTypeBool').setAttribute("disabled", "disabled");
+                document.getElementById('optTypeInt').setAttribute("disabled", "disabled");
+                document.getElementById('optTypeString').setAttribute("disabled", "disabled");
+
+            }
 
             document.getElementById('observedCallSection').innerHTML = htmlComm;
         };

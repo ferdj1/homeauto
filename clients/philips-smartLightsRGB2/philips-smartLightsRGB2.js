@@ -6,7 +6,7 @@ var util = require('../util');
 
 //local settings
 var color = '#ffffff';
-var intensity = 1.0;
+var intensity = 50;
 var power = 'OFF';
 
 socket.on('connect', function () {
@@ -75,6 +75,7 @@ function getColor() {
 }
 
 function getIntensity() {
+    console.log('Get intensity: ' + intensity);
     return intensity;
 }
 
