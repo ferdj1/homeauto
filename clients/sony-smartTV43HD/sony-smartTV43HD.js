@@ -3,6 +3,7 @@ var socket = io.connect('http://localhost:3000');
 var deviceID = 'sony-smartTV43HD';
 
 var util = require('../util');
+var prompt = require('prompt');
 
 //local settings
 var volume = 50;
@@ -13,6 +14,7 @@ var power = 'OFF';
 socket.on('connect', function () {
     console.log('OK!');
     sendDesc();
+    controlDevice();
 });
 
 socket.on('exec', function (jsonInfo) {
@@ -36,6 +38,25 @@ socket.on('get values', function (jsonInfo) {
         getValues();
     }
 });
+
+function controlDevice() {
+    prompt.get(['command', 'argument'], function (err, result) {
+        var json = {
+            commandID: result.command,
+            params: result.argument
+        };
+        var res = handleMessage(json);
+
+        var executedJSON = {
+            deviceID: deviceID,
+            commandID: result.command,
+            result: res
+        };
+
+        socket.emit('executed', executedJSON);
+        controlDevice();
+    });
+}
 
 function sendDesc() {
     var jsonObj = util.readDescAsJSONObj();
@@ -79,10 +100,12 @@ function changeSource(src) {
 }
 
 function getVolume() {
+    console.log('Get volume: ' + volume);
     return volume;
 }
 
 function getChannel() {
+    console.log('Get channel: ' + channel);
     return channel;
 }
 

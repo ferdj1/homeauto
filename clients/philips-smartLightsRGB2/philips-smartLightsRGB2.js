@@ -3,15 +3,19 @@ var socket = io.connect('http://localhost:3000');
 var deviceID = 'philips-smartLightsRGB2';
 
 var util = require('../util');
+var prompt = require('prompt');
 
 //local settings
 var color = '#ffffff';
 var intensity = 50;
 var power = 'OFF';
 
+
+
 socket.on('connect', function () {
     console.log('OK!');
     sendDesc();
+    controlDevice();
 });
 
 socket.on('exec', function (jsonInfo) {
@@ -35,6 +39,25 @@ socket.on('get values', function (jsonInfo) {
         getValues();
     }
 });
+
+function controlDevice() {
+    prompt.get(['command', 'argument'], function (err, result) {
+        var json = {
+            commandID: result.command,
+            params: result.argument
+        };
+        var res = handleMessage(json);
+
+        var executedJSON = {
+            deviceID: deviceID,
+            commandID: result.command,
+            result: res
+        };
+
+        socket.emit('executed', executedJSON);
+        controlDevice();
+    });
+}
 
 function sendDesc() {
     var jsonObj = util.readDescAsJSONObj();
@@ -71,6 +94,7 @@ function changeIntensity(intns) {
 }
 
 function getColor() {
+    console.log('Get color: ' + color);
     return color;
 }
 

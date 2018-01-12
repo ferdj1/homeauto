@@ -8,6 +8,9 @@ var monk = require('monk');
 var db = monk('localhost:27017/homedb');
 
 var sessionSocketMap = new Map();
+var timersList = [];
+
+var timerID = setInterval(periodicallyExecute, 1000);
 
 var tempDeviceInfo;
 
@@ -35,6 +38,35 @@ app.get('/', function (req, res) {
 
     devices.find({}, {}, function (e, docs) {
         res.render('index', {title: 'SmartHome', devices:docs, socketMap: sessionSocketMap});
+    });
+
+});
+
+app.get('/scheduler', function (req, res) {
+    db.collection("devices").find({}, {}, function (e, docs) {
+        db.collection("timers").find({}, {}, function (e, docs2) {
+            res.render('scheduler', {title: 'Scheduler', devices: docs, timers: docs2});
+        });
+    });
+});
+
+app.post('/schedule', function (req, res) {
+    var body = req.body;
+    console.log(body);
+
+    db.collection("timers").insert({
+        deviceID: body.deviceSelector,
+        commandID: body.commandSelector,
+        params: body.paramVal,
+        interval: body.interval
+    }, function (err, doc) {
+        if(err) {
+            res.render('error',
+                {title: 'Error',
+                    error_message: 'Cannot set timer.'});
+        } else {
+            res.redirect('/scheduler');
+        }
     });
 
 });
@@ -281,6 +313,9 @@ io.sockets.on('connection', function (socket) {
                 db.collection("devices").insert(jsonObj);
             }
         });
+
+        //setup scheduler
+        findTimers(callback, deviceID);
     });
 
     socket.on('values', function (jsonObj) {
@@ -391,13 +426,70 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('disconnect', function () {
+        var deviceID;
+
         for(let [key, value] of sessionSocketMap) {
             if(value === socket) {
+                deviceID = key;
                 sessionSocketMap.delete(key);
+            }
+        }
+
+        //remove timers for offline device
+        for(var i = timersList.length - 1; i >= 0; i--) {
+            if(timersList[i].deviceID === deviceID) {
+                timersList.splice(i, 1);
             }
         }
     });
 });
+
+function callback(timers) {
+    if(timers && timers.length > 0) {
+        for (var i = 0; i < timers.length; i++) {
+            var timer = timers[i];
+
+            timer.counter = 0;
+
+            timersList.push(timer);
+        }
+    }
+
+    console.log(timersList);
+}
+
+function findTimers(callback, devID) {
+    db.collection("timers").find({deviceID: devID}, {}, function (err, docs) {
+        if(err) {
+
+        } else {
+            callback(docs);
+        }
+    });
+}
+
+function periodicallyExecute() {
+    for(var i = 0; i < timersList.length; i++) {
+        timersList[i].counter++;
+        console.log(timersList[i].deviceID + ', ' + timersList[i].commandID + ' : ' + timersList[i].counter);
+        if(timersList[i].counter === parseInt(timersList[i].interval)) {
+            timersList[i].counter = 0;
+            var json = {
+                deviceID: timersList[i].deviceID,
+                commandID: timersList[i].commandID,
+                params: timersList[i].params
+            };
+
+            //console.log(json);
+
+            var socketObj = sessionSocketMap.get(timersList[i].deviceID);
+            if(socketObj != null && socketObj !== undefined) {
+                socketObj.emit('exec', json);
+            }
+        }
+
+    }
+}
 
 
 server.listen(process.env.PORT || 3000);

@@ -1,0 +1,143 @@
+extends layout
+block header
+    include includes/header
+block content
+    .container
+        form(action="/schedule" method="post")
+            .columns
+                .column
+                    h2.title Device
+                    .control
+                        .select
+                            select#deviceSelector(name="deviceSelector")
+                                - var deviceList = devices;
+                                for device in deviceList
+                                    option #{device.deviceID}
+                    #devInfo
+                .column
+                    h2.title Command
+                    .control
+                        .select
+                            select#commandSelector(name="commandSelector")
+                    #commInfo
+                .column
+                    h2.title Parameter
+                    #paramSet
+                .column
+                    h2.title Schedule:
+                    #schBox
+                        input.input(type="number" name="interval" placeholder="60" value="60")
+                    h3.subtitle Enter interval (in seconds)
+            .container
+                button.button.is-link Schedule
+    .container
+        .section
+            h2.title Currently set timers:
+            - var timerList = timers;
+                for timer in timerList
+                    .box
+                        h1.title.is-4 #{timer.deviceID} : #{timer.commandID}(#{timer.params}) every #{timer.interval} seconds.
+
+    script.
+        var deviceSelector = document.getElementById('deviceSelector');
+
+        deviceSelector.onchange = function () {
+            var devStr = deviceSelector.options[deviceSelector.selectedIndex].value;
+            var deviceList = !{JSON.stringify(devices)};
+            var dev;
+            var command;
+
+            for (i = 0; i < deviceList.length; i++) {
+                if (deviceList[i].deviceID === devStr) {
+                    dev = deviceList[i];
+                }
+            }
+
+            var html = '';
+
+            for (i = 0; i < dev.commands.length; i++) {
+                html += '<option>' + dev.commands[i].commandID + '</option>';
+            }
+
+            var commSelector = document.getElementById("commandSelector");
+            commSelector.innerHTML = html;
+
+            var htmlDevice = '';
+            var deviceID = dev.deviceID;
+            var deviceName = dev.deviceName;
+            var deviceManufacturer = dev.deviceManufacturer;
+
+            htmlDevice += '<div class="box"><h3 class="is-5">' + deviceID + '</h3>';
+            htmlDevice += '<h2 class="title">' + deviceName + '</h2>';
+            htmlDevice += '<h3 class="subtitle">' + deviceManufacturer + '</h3>';
+            htmlDevice += '</div>';
+
+            document.getElementById('devInfo').innerHTML = htmlDevice;
+
+        };
+
+        deviceSelector.onchange();
+
+        var commandSelector = document.getElementById('commandSelector');
+
+        commandSelector.onchange = function () {
+            var commStr = commandSelector.options[commandSelector.selectedIndex].value;
+            var devStr = deviceSelector.options[deviceSelector.selectedIndex].value;
+            var deviceList = !{JSON.stringify(devices)};
+            var dev;
+            var command;
+
+            for (i = 0; i < deviceList.length; i++) {
+                if (deviceList[i].deviceID === devStr) {
+                    dev = deviceList[i];
+                }
+            }
+
+            for (i = 0; i < dev.commands.length; i++) {
+                if (dev.commands[i].commandID === commStr) {
+                    command = dev.commands[i];
+                }
+            }
+
+            var htmlComm = '';
+            var commID = command.commandID;
+            var commName = command.commandName;
+            var commDesc = command.commandDesc;
+            var params = command.params;
+            var retVal = command.returnVal;
+
+            htmlComm += '<div class="box"><h3 class="is-5">' + commID + '</h3>';
+            htmlComm += '<h2 class="title">' + commName + '</h2>';
+            htmlComm += '<h3 class="subtitle">' + commDesc + '</h3>';
+            htmlComm += '<h3 class="is-6">Parameters: ' + params + '</h3>';
+            htmlComm += '<h3 class="is-6">Returns: ' + retVal + '</h3>';
+            htmlComm += '</div>';
+
+            document.getElementById('commInfo').innerHTML = htmlComm;
+
+
+            if(params === 'int') {
+                var htmlParam = '';
+                htmlParam += '<input class="input" type="number" name="paramVal">';
+                document.getElementById('paramSet').innerHTML = htmlParam;
+            } else if(params === 'string') {
+                var htmlParam = '';
+                htmlParam += '<input class="input" type="text" name="paramVal">';
+                document.getElementById('paramSet').innerHTML = htmlParam;
+            } else if(params === 'bool') {
+                var htmlParam = '';
+                htmlParam += '<div class="select">';
+                htmlParam += '<select name="paramVal">';
+                htmlParam += '<option>'+ false + '</option>';
+                htmlParam += '<option>'+ true + '</option>';
+                htmlParam += '</select></div>';
+                document.getElementById('paramSet').innerHTML = htmlParam;
+            } else if(params === null) {
+                var htmlParam = '';
+                document.getElementById('paramSet').innerHTML = htmlParam;
+            } else {
+            }
+
+        };
+
+        commandSelector.onchange();
