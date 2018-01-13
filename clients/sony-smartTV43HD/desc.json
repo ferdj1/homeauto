@@ -22,7 +22,7 @@
       "commandID" : "changeVolume",
       "commandName" : "Change Volume",
       "commandDesc" : "Changes TVs volume",
-      "params": "int",
+      "params": "number",
       "returnVal": null
     },
     {
@@ -36,7 +36,7 @@
       "commandID" : "changeChannel",
       "commandName" : "Change Channel",
       "commandDesc" : "Changes current channel",
-      "params": "int",
+      "params": "number",
       "returnVal": null
     },
     {
@@ -44,14 +44,14 @@
       "commandName" : "Get Volume",
       "commandDesc" : "Gets currently set volume",
       "params": null,
-      "returnVal": "int"
+      "returnVal": "number"
     },
     {
       "commandID" : "getChannel",
       "commandName" : "Get Channel",
       "commandDesc" : "Gets currently set channel",
       "params": null,
-      "returnVal": "int"
+      "returnVal": "number"
     }
   ]
 }

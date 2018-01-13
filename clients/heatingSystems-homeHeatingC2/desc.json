@@ -64,21 +64,21 @@
       "commandID" : "changeValue1",
       "commandName" : "Change Value Heater 1",
       "commandDesc" : "Changes value of heater 1",
-      "params": "int",
+      "params": "number",
       "returnVal": null
     },
     {
       "commandID" : "changeValue2",
       "commandName" : "Change Value Heater 2",
       "commandDesc" : "Changes value of heater 2",
-      "params": "int",
+      "params": "number",
       "returnVal": null
     },
     {
       "commandID" : "changeValue3",
       "commandName" : "Change Value Heater 3",
       "commandDesc" : "Changes value of heater 3",
-      "params": "int",
+      "params": "number",
       "returnVal": null
     }
   ]

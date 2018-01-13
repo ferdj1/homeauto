@@ -29,7 +29,7 @@
       "commandID" : "changeIntensity",
       "commandName" : "Change Intensity",
       "commandDesc" : "Change intensity of the lights",
-      "params": "int",
+      "params": "number",
       "returnVal": null
     },
     {
@@ -44,7 +44,7 @@
       "commandName" : "Get Intensity",
       "commandDesc" : "Gets currently set intensity",
       "params": null,
-      "returnVal": "int"
+      "returnVal": "number"
     }
   ]
 }

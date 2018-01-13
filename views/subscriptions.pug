@@ -37,48 +37,7 @@ block content
                             .select
                                 select#executedCall(name="executedCall")
                         div#execSection
-
-                .container#intOptionsSection
-                    input(type="hidden" name="optTypeInt" id="optTypeInt" value="true")
-                    .box
-                        h2.subtitle.is-3 Options:
-                        label.checkbox
-                            input#optCheckInt(type="checkbox" name="optCheckInt")
-                            |  Use options
-                        h4.is-4 Execute only if result is:
-                        .control
-                            .select
-                                select#intSign(name="signInt")
-                                    option less than
-                                    option less or equal to
-                                    option equal to
-                                    option greater or equal to
-                                    option greater than
-                        .control
-                            input.input#intCompVal(type="number" name="compValueInt")
-                .container#stringOptionsSection
-                    input(type="hidden" name="optTypeString" id="optTypeString" value="true")
-                    .box
-                        h2.subtitle.is-3 Options:
-                        label.checkbox
-                            input#optCheckString(type="checkbox" name="optCheckString")
-                            |  Use options
-                        h4.is-4 Execute only if result is equal to:
-                        .control
-                            input.input#strCompVal(type="text" name="compValueString")
-                .container#boolOptionsSection
-                    input(type="hidden" name="optTypeBool" id="optTypeBool" value="true")
-                    .box
-                        h2.subtitle.is-3 Options:
-                        label.checkbox
-                            input#optCheckBool(type="checkbox" name="optCheckBool")
-                            |  Use options
-                        h4.is-4 Execute only if result is:
-                        .control
-                            .select
-                                select#boolVal(name="signBool")
-                                    option false
-                                    option true
+                .container#optionsSection
                 br
                 .control
                     button.button.is-link Subscribe
@@ -92,15 +51,6 @@ block content
                         for obs in sub.observerList
                             p.is-5 #{obs.observerDeviceID} : #{obs.executedCommandID}
     script.
-
-        var intOptions = document.getElementById('intOptionsSection');
-        intOptions.style.display = "none";
-
-        var stringOptions = document.getElementById('stringOptionsSection');
-        stringOptions.style.display = "none";
-
-        var boolOptions = document.getElementById('boolOptionsSection');
-        boolOptions.style.display = "none";
 
         var obs = document.getElementById('observer');
         obs.onchange = function () {
@@ -256,63 +206,88 @@ block content
             htmlComm += '<h3 class="is-6">Returns: ' + retVal + '</h3>';
             htmlComm += '</div>';
 
-            if(retVal === 'int') {
-                intOptions.removeAttribute("disabled");
-                document.getElementById('optTypeInt').removeAttribute("disabled");
+            if(retVal === 'number') {
+                var optionsSection = document.getElementById('optionsSection');
 
-                intOptions.style.display = "block";
-                stringOptions.style.display = "none";
-                boolOptions.style.display = "none";
+                var optHTML = '';
 
-                stringOptions.setAttribute("disabled", "disabled");
-                boolOptions.setAttribute("disabled", "disabled");
+                optHTML += '<input type="hidden" name="optType" value="numOpt">';
+                optHTML += '<div class="box">';
+                optHTML += '<h2 class="subtitle is-3">Options:</h2>';
+                optHTML += '<label class="checkbox">';
+                optHTML += '<input type="checkbox" name="optCheck">';
+                optHTML += ' Use options</label>';
+                optHTML += '<h4 class="is-4">Execute only if result is:</h2>';
+                optHTML += '<div class="control">';
+                optHTML += '<div class="select">';
+                optHTML += '<select name="sign">';
+                optHTML += '<option>less than</option>';
+                optHTML += '<option>less or equal to</option>';
+                optHTML += '<option>equal to</option>';
+                optHTML += '<option>greater or equal to</option>';
+                optHTML += '<option>greater than</option>';
+                optHTML += '</select>';
+                optHTML += '</div>';
+                optHTML += '</div>';
+                optHTML += '<div class="control">';
+                optHTML += '<input class="input" type="number" name="compValue">';
+                optHTML += '</div>';
+                optHTML += '</div>';
 
-                document.getElementById('optTypeBool').setAttribute("disabled", "disabled");
-                document.getElementById('optTypeString').setAttribute("disabled", "disabled");
+                optionsSection.innerHTML = optHTML;
 
 
             } else if(retVal === 'string') {
-                stringOptions.removeAttribute("disabled");
-                document.getElementById('optTypeString').removeAttribute("disabled");
+                var optionsSection = document.getElementById('optionsSection');
 
+                var optHTML = '';
 
-                intOptions.style.display = "none";
-                stringOptions.style.display = "block";
-                boolOptions.style.display = "none";
+                optHTML += '<input type="hidden" name="optType" value="stringOpt">';
+                optHTML += '<div class="box">';
+                optHTML += '<h2 class="subtitle is-3">Options:</h2>';
+                optHTML += '<label class="checkbox">';
+                optHTML += '<input type="checkbox" name="optCheck">';
+                optHTML += ' Use options</label>';
+                optHTML += '<h4 class="is-4">Execute only if result is equal to:</h2>';
+                optHTML += '<div class="control">';
+                optHTML += '<input class="input" type="text" name="compValue">';
+                optHTML += '</div>';
+                optHTML += '</div>';
 
-                intOptions.setAttribute("disabled", "disabled");
-                boolOptions.setAttribute("disabled", "disabled");
-
-                document.getElementById('optTypeBool').setAttribute("disabled", "disabled");
-                document.getElementById('optTypeInt').setAttribute("disabled", "disabled");
+                optionsSection.innerHTML = optHTML;
 
 
             } else if(retVal === 'bool') {
-                boolOptions.removeAttribute("disabled");
-                document.getElementById('optTypeBool').removeAttribute("disabled");
+                var optionsSection = document.getElementById('optionsSection');
 
-                intOptions.style.display = "none";
-                stringOptions.style.display = "none";
-                boolOptions.style.display = "block";
+                var optHTML = '';
 
-                intOptions.setAttribute("disabled", "disabled");
-                stringOptions.setAttribute("disabled", "disabled");
+                optHTML += '<input type="hidden" name="optType" value="boolOpt">';
+                optHTML += '<div class="box">';
+                optHTML += '<h2 class="subtitle is-3">Options:</h2>';
+                optHTML += '<label class="checkbox">';
+                optHTML += '<input type="checkbox" name="optCheck">';
+                optHTML += ' Use options</label>';
+                optHTML += '<h4 class="is-4">Execute only if result is:</h2>';
+                optHTML += '<div class="control">';
+                optHTML += '<div class="select">';
+                optHTML += '<select name="sign">';
+                optHTML += '<option>true</option>';
+                optHTML += '<option>false</option>';
+                optHTML += '</select>';
+                optHTML += '</div>';
+                optHTML += '</div>';
+                optHTML += '</div>';
 
-                document.getElementById('optTypeString').setAttribute("disabled", "disabled");
-                document.getElementById('optTypeInt').setAttribute("disabled", "disabled");
+                optionsSection.innerHTML = optHTML;
 
             } else {
-                intOptions.style.display = "none";
-                stringOptions.style.display = "none";
-                boolOptions.style.display = "none";
+                var optionsSection = document.getElementById('optionsSection');
 
-                intOptions.setAttribute("disabled", "disabled");
-                boolOptions.setAttribute("disabled", "disabled");
-                stringOptions.setAttribute("disabled", "disabled");
+                var optHTML = '';
 
-                document.getElementById('optTypeBool').setAttribute("disabled", "disabled");
-                document.getElementById('optTypeInt').setAttribute("disabled", "disabled");
-                document.getElementById('optTypeString').setAttribute("disabled", "disabled");
+                optionsSection.innerHTML = optHTML;
+
 
             }
 
