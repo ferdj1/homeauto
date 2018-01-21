@@ -36,7 +36,11 @@ block content
             - var timerList = timers;
                 for timer in timerList
                     .box
-                        h1.title.is-4 #{timer.deviceID} : #{timer.commandID}(#{timer.params}) every #{timer.interval} seconds.
+                        h1.title.is-4.is-pulled-left #{timer.deviceID} : #{timer.commandID}(#{timer.params}) every #{timer.interval} seconds.
+                        form(action="/removeTimer", method="post")
+                            input(type="hidden", name="id", value=timer._id)
+                            button.button.is-danger.is-small.is-pulled-right Delete timer
+                        br
 
     script.
         var deviceSelector = document.getElementById('deviceSelector');

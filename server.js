@@ -215,6 +215,10 @@ app.post('/addDevToRoom', function (req, res) {
 
     db.collection("devices").findOne({deviceID: body.roomDevID}, function (err, result) {
         if(err || result == null) {
+            res.render('error', {
+                title: 'Error',
+                error_message: 'Couldn\'t add device.'
+            });
         } else {
             db.collection("rooms").update({
                 roomName: body.roomName
@@ -256,6 +260,65 @@ app.get('/device/:deviceID', function (req, res) {
         }
     });
 
+});
+
+app.post('/removeDevice', function (req, res) {
+    var deviceID = req.body.deviceID;
+    db.collection("devices").remove({deviceID: deviceID});
+    db.collection("timers").remove({deviceID: deviceID});
+    db.collection("observerMapCollection").remove({observedDeviceID: deviceID});
+    db.collection("rooms").update({}, {
+        $pull: {devices: {deviceID: deviceID}}},
+        {multi:true});
+    db.collection("observerMapCollection").update({}, {
+        $pull: {observerList: {observerDeviceID: deviceID}}},
+        {multi:true});
+
+    res.redirect('/');
+});
+
+app.post('/removeFromRoom', function (req, res) {
+    var deviceID = req.body.deviceID;
+    db.collection("rooms").update({}, {
+        $pull: {devices: {deviceID: deviceID}}},
+        {multi: true}
+    );
+
+    res.redirect('/rooms');
+});
+
+app.post('/removeSubAll', function (req, res) {
+    var deviceID = req.body.deviceID;
+    db.collection("observerMapCollection").remove({observedDeviceID: deviceID});
+
+    res.redirect('/subscriptions');
+});
+
+app.post('/removeSubOne', function (req, res) {
+    var deviceID = req.body.deviceID;
+    var observerDeviceID = req.body.observerDeviceID;
+    var executedCommandID = req.body.executedCommandID;
+
+    db.collection("observerMapCollection").update({observedDeviceID: deviceID}, {
+            $pull: {observerList: {observerDeviceID: observerDeviceID, executedCommandID: executedCommandID}}},
+        {multi: true}
+    );
+
+    res.redirect('/subscriptions');
+});
+
+app.post('/removeTimer', function (req, res) {
+    var tID = req.body.id;
+    db.collection("timers").remove({_id: tID});
+
+
+    for(var i = timersList.length - 1; i >= 0; i--) {
+        if(timersList[i]._id === tID) {
+            timersList.splice(i, 1);
+        }
+    }
+
+    res.redirect('/scheduler');
 });
 
 app.post('/exec', function (req, res) {
@@ -441,7 +504,6 @@ function findTimers(callback, devID) {
 function periodicallyExecute() {
     for(var i = 0; i < timersList.length; i++) {
         timersList[i].counter++;
-        console.log(timersList[i].deviceID + ', ' + timersList[i].commandID + ' : ' + timersList[i].counter);
         if(timersList[i].counter === parseInt(timersList[i].interval)) {
             timersList[i].counter = 0;
             var json = {
@@ -449,8 +511,6 @@ function periodicallyExecute() {
                 commandID: timersList[i].commandID,
                 params: timersList[i].params
             };
-
-            //console.log(json);
 
             var socketObj = sessionSocketMap.get(timersList[i].deviceID);
             if(socketObj != null && socketObj !== undefined) {

@@ -47,9 +47,19 @@ block content
             - var subscriptionList = subscriptions;
                 for sub in subscriptionList
                     .box
-                        h1.title.is-4 #{sub.observedDeviceID} : #{sub.observedCommandID}
+                        h1.title.is-4.is-pulled-left #{sub.observedDeviceID} : #{sub.observedCommandID}
+                        form(action="/removeSubAll", method="post")
+                            input(type="hidden", name="deviceID", value=sub.observedDeviceID)
+                            button.button.is-danger.is-small.is-pulled-right Delete all
+                        div.is-clearfix
                         for obs in sub.observerList
-                            p.is-5 #{obs.observerDeviceID} : #{obs.executedCommandID}
+                            .box
+                                p.is-5 #{obs.observerDeviceID} : #{obs.executedCommandID}
+                                    form(action="/removeSubOne", method="post")
+                                        input(type="hidden", name="deviceID", value=sub.observedDeviceID)
+                                        input(type="hidden" name="observerDeviceID" value=obs.observerDeviceID)
+                                        input(type="hidden" name="executedCommandID" value=obs.executedCommandID)
+                                        button.button.is-small.is-danger Delete
     script.
 
         var obs = document.getElementById('observer');

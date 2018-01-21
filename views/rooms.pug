@@ -41,9 +41,13 @@ block content
                                 h2.title.is-4 #{device.deviceName}
                                 h3.subtitle.is-5 #{device.deviceManufacturer}
                                 if socketMap.get(device.deviceID)
-                                    span.tag.is-success Connected
+                                    span.tag.is-success.is-pulled-left Connected
                                 else
-                                    span.tag.is-danger Disconnected
+                                    span.tag.is-danger.is-pulled-left Disconnected
+                                form(action="/removeFromRoom", method="post")
+                                    input(type="hidden" name="deviceID" value=device.deviceID)
+                                    button.button.is-danger.is-small.is-inverted.is-pulled-right Delete device
+                                br
                     form(action="/addDevToRoom" method="post")
                         .field
                             .control
@@ -51,11 +55,43 @@ block content
                             label.label Add device to room:
                             .control
                                 .select
-                                    select(name="roomDevID")
-                                        for dev in deviceList
-                                            option #{dev.deviceID}
+                                    select.roomDeviceSelector(name="roomDevID")
                             .control
                                 button.button.is-link Add
+    script.
+        var deviceList = !{JSON.stringify(devices)};
+        var roomList = !{JSON.stringify(rooms)};
+        var availableDevices = [];
+
+        for(let i = 0; i < deviceList.length; i++) {
+            var isTaken = false;
+            for(let j = 0; j < roomList.length; j++) {
+                for(let k = 0; k < roomList[j].devices.length; k++) {
+                    if(roomList[j].devices[k].deviceID === deviceList[i].deviceID) {
+                        isTaken = true;
+                        break;
+                    }
+                }
+            }
+
+            if(isTaken === false) {
+                availableDevices.push(deviceList[i]);
+            }
+        }
+
+        var roomDeviceSelectorList = document.getElementsByClassName('roomDeviceSelector');
+
+
+        for(let i = 0; i < roomDeviceSelectorList.length; i++) {
+            var selectorHTML = '';
+            for(let j = 0; j < availableDevices.length; j++) {
+                selectorHTML += '<option>' + availableDevices[j].deviceID + '</option>';
+            }
+            roomDeviceSelectorList[i].innerHTML = selectorHTML;
+
+        }
+
+
 
 
 

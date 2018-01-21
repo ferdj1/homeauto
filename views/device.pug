@@ -8,9 +8,12 @@ block content
                 h1.title= device.deviceName
                 h3.subtitle= device.deviceManufacturer
                 if socketMap.get(device.deviceID)
-                    span.tag.is-success Connected
+                    span.tag.is-success.is-pulled-left Connected
                 else
-                    span.tag.is-danger Disconnected
+                    span.tag.is-danger.is-pulled-left Disconnected
+                form(action="/removeDevice", method="post")
+                    input(type="hidden" name="deviceID" value=device.deviceID)
+                    button.button.is-danger.is-small.is-inverted.is-pulled-right Delete device
     .container
         section.section
             .container
