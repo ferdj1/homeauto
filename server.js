@@ -52,7 +52,6 @@ app.get('/scheduler', function (req, res) {
 
 app.post('/schedule', function (req, res) {
     var body = req.body;
-    console.log(body);
 
     db.collection("timers").insert({
         deviceID: body.deviceSelector,
@@ -69,6 +68,7 @@ app.post('/schedule', function (req, res) {
         }
     });
 
+    findTimers(callback, body.deviceSelector);
 });
 
 app.get('/subscriptions', function (req, res) {
@@ -97,7 +97,6 @@ app.post('/subscriptions', function (req, res) {
     var reqBody = req.body;
     var db = req.db;
 
-    console.log(reqBody);
 
     var observer = reqBody.observer;
     var executedCall = reqBody.executedCall;
@@ -346,11 +345,12 @@ app.get('*', function (req, res) {
 });
 
 io.sockets.on('connection', function (socket) {
-    console.log('OK!');
 
     socket.on('desc', function (jsonObj) {
         var deviceID = jsonObj.deviceID;
         sessionSocketMap.set(deviceID, socket);
+
+        console.log(deviceID + ' connected.');
 
         var devices = db.collection("devices").findOne({deviceID: deviceID}, function (err, result) {
             if(err) {
@@ -474,6 +474,8 @@ io.sockets.on('connection', function (socket) {
                 timersList.splice(i, 1);
             }
         }
+
+        console.log(deviceID + ' disconnected.');
     });
 });
 
@@ -487,8 +489,6 @@ function callback(timers) {
             timersList.push(timer);
         }
     }
-
-    console.log(timersList);
 }
 
 function findTimers(callback, devID) {
@@ -504,7 +504,7 @@ function findTimers(callback, devID) {
 function periodicallyExecute() {
     for(var i = 0; i < timersList.length; i++) {
         timersList[i].counter++;
-        if(timersList[i].counter === parseInt(timersList[i].interval)) {
+        if (timersList[i].counter === parseInt(timersList[i].interval)) {
             timersList[i].counter = 0;
             var json = {
                 deviceID: timersList[i].deviceID,
@@ -513,11 +513,10 @@ function periodicallyExecute() {
             };
 
             var socketObj = sessionSocketMap.get(timersList[i].deviceID);
-            if(socketObj != null && socketObj !== undefined) {
+            if (socketObj != null && socketObj !== undefined) {
                 socketObj.emit('exec', json);
             }
         }
-
     }
 }
 

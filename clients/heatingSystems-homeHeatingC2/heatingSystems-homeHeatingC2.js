@@ -87,32 +87,32 @@ function turnOff() {
 }
 
 function turnOn1() {
-    power = 'ON';
+    powerHeater1 = 'ON';
     console.log('Turning heater 1 on...');
 }
 
 function turnOff1() {
-    power = 'OFF';
+    powerHeater1 = 'OFF';
     console.log('Turning heater 1 off...');
 }
 
 function turnOn2() {
-    power = 'ON';
+    powerHeater2 = 'ON';
     console.log('Turning heater 2 on...');
 }
 
 function turnOff2() {
-    power = 'OFF';
+    powerHeater2 = 'OFF';
     console.log('Turning heater 2 off...');
 }
 
 function turnOn3() {
-    power = 'ON';
+    powerHeater3 = 'ON';
     console.log('Turning heater 3 on...');
 }
 
 function turnOff3() {
-    power = 'OFF';
+    powerHeater3 = 'OFF';
     console.log('Turning heater 3 off...');
 }
 
