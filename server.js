@@ -37,9 +37,138 @@ app.get('/', function (req, res) {
     var devices = db.get('devices');
 
     devices.find({}, {}, function (e, docs) {
-        res.render('index', {title: 'SmartHome', devices:docs, socketMap: sessionSocketMap});
+        db.collection("scenes").find({}, {}, function (e, docs2) {
+            res.render('index', {title: 'SmartHome', devices:docs, scenes: docs2, socketMap: sessionSocketMap});
+        });
     });
 
+});
+
+app.post('/sceneNew', function (req, res) {
+    var body = req.body;
+    if(body.name.trim() !== '') {
+        db.collection("scenes").findOne({sceneName: body.name}, {}, function (e, docs) {
+            if(!docs) {
+                db.collection("scenes").insert({
+                    sceneName: body.name,
+                    commands: []
+                });
+            }
+        });
+
+        res.redirect('/');
+
+    }
+});
+
+app.get('/sceneEdit/:sceneName', function (req, res) {
+    var name = req.params.sceneName;
+
+    db.collection("scenes").findOne({sceneName: name}, {}, function (e, docs) {
+        db.collection("devices").find({}, {}, function (e, docs2) {
+            res.render('sceneEdit', {title: 'Edit scene', devices:docs2, sceneObj: docs});
+        });
+    });
+});
+
+
+app.post('/sceneEdit/:sceneName', function (req, res) {
+    var name = req.params.sceneName;
+
+    db.collection("devices").findOne({deviceID: req.body.deviceSelector}, {}, function (e, docs) {
+        var command;
+
+        for(let i = 0; i < docs.commands.length; i++) {
+            if(docs.commands[i].commandID === req.body.commandSelector) {
+                command = docs.commands[i];
+            }
+        }
+
+        db.collection("scenes").update({sceneName: name}, {
+            $addToSet: {
+                commands: {
+                    device: docs,
+                    command: command,
+                    params: req.body.paramVal
+                }
+            }
+        }, function (err, doc) {
+            if(err) {
+                res.render('error', {
+                    title: 'Error',
+                    error_message: 'Couldn\'t add.'
+                });
+            } else {
+                res.redirect('/sceneEdit/' + name);
+            }
+        });
+    });
+});
+
+app.post('/scene/:sceneName', function (req, res) {
+    var name = req.params.sceneName;
+
+    db.collection("scenes").findOne({sceneName: name}, {}, function (e, docs) {
+        for(let i = 0; i < docs.commands.length; i++) {
+            var command = docs.commands[i];
+
+            var json = {
+                deviceID: command.device.deviceID,
+                commandID: command.command.commandID,
+                params: command.params
+            };
+            var id = json.deviceID;
+
+            var socketObj = sessionSocketMap.get(id);
+            if(socketObj != null && socketObj !== undefined) {
+                socketObj.emit('exec', json);
+            } else {
+            }
+        }
+    });
+
+    res.redirect('/');
+});
+
+app.post('/removeSceneCommand', function (req, res) {
+    var name = req.body.sceneName;
+    var deviceID = req.body.deviceID;
+    var commandID = req.body.commandID;
+    var params = req.body.params;
+
+
+    db.collection("devices").findOne({deviceID: deviceID}, {}, function (e, docs) {
+        var command;
+
+        for(let i = 0; i < docs.commands.length; i++) {
+            if(docs.commands[i].commandID === commandID) {
+                command = docs.commands[i];
+            }
+        }
+
+        db.collection("scenes").update({sceneName: name}, {
+                $pull: {commands: {device: docs, command: command, params: params}}},
+            {multi: true}
+        );
+        if(params === null || params.length === 0) {
+            db.collection("scenes").update({sceneName: name}, {
+                    $pull: {commands: {device: docs, command: command}}
+                },
+                {multi: true}
+            );
+        }
+    });
+
+    res.redirect('/sceneEdit/' + name);
+});
+
+app.post('/removeScene', function (req, res) {
+    var name = req.body.sceneName;
+
+
+    db.collection("scenes").remove({sceneName: name});
+
+    res.redirect('/');
 });
 
 app.get('/scheduler', function (req, res) {

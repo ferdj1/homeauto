@@ -1,0 +1,26 @@
+- var sceneList = scenes;
+div.container#scenes
+    h1.title.is-pulled-left Scenes
+    form.is-pulled-right(action='/sceneNew/', method="post")
+        .field
+            .columns
+                .column
+                    input.input(type="text" name="name" placeholder="Scene name")
+                .column
+                    button.button.is-primary New scene
+    div.is-clearfix
+    if sceneList !== null && sceneList !== undefined
+        for scene in sceneList
+            .notification.is-warning
+                .columns
+                    .column
+                        h2.title.is-2.is-pulled-left #{scene.sceneName}
+                        form.is-pulled-left(action='/scene/' + scene.sceneName, method="post", style="margin-left: 1em;")
+                            button.button.is-primary Run
+                        div.is-clearfix
+                    .column
+                        form.is-pulled-right(action='/sceneEdit/' + scene.sceneName, method="get")
+                            button.button.is-info Edit
+                for command in scene.commands
+                    .box
+                        h1.title.is-4 #{command.device.deviceName} : #{command.command.commandName}(#{command.params})

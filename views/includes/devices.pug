@@ -7,6 +7,7 @@ div.container#devices
             .message-body
                 p Connect devices to the system. Once connected, device will be registered in the database.
     else
+        h1.title Devices
         for device in deviceList
             a(href='device/' + device.deviceID)
                 .notification.is-info
